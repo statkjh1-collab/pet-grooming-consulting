@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import ChatWidget from './components/ChatWidget.vue'
 </script>
 
 <template>
@@ -18,6 +19,7 @@ import { RouterLink, RouterView } from 'vue-router'
   </header>
 
   <RouterView />
+  <ChatWidget />
 </template>
 
 <style>
