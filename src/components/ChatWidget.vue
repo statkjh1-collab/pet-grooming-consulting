@@ -1,100 +1,17 @@
 <script setup>
-import { ref, nextTick } from 'vue'
+const PROMPT = '당신은 펫미용샵 창업 전문 컨설턴트입니다. 저는 펫미용샵 창업을 준비 중인데, 궁금한 점이 있어서 왔습니다.'
 
-const open = ref(false)
-const input = ref('')
-const loading = ref(false)
-const messagesEl = ref(null)
-const messages = ref([
-  { role: 'assistant', content: '안녕하세요! 펫미용샵 창업 컨설턴트입니다 🐾\n궁금한 점을 무엇이든 물어보세요!' }
-])
-
-async function send() {
-  const text = input.value.trim()
-  if (!text || loading.value) return
-
-  messages.value.push({ role: 'user', content: text })
-  input.value = ''
-  loading.value = true
-  scrollBottom()
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: messages.value
-          .filter(m => m.role !== 'assistant' || messages.value.indexOf(m) > 0)
-          .map(m => ({ role: m.role, content: m.content }))
-      })
-    })
-    const data = await res.json()
-    messages.value.push({ role: 'assistant', content: data.text || data.error || '오류가 발생했습니다.' })
-  } catch {
-    messages.value.push({ role: 'assistant', content: '연결 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' })
-  } finally {
-    loading.value = false
-    scrollBottom()
-  }
-}
-
-function scrollBottom() {
-  nextTick(() => {
-    if (messagesEl.value) messagesEl.value.scrollTop = messagesEl.value.scrollHeight
-  })
-}
-
-function onKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
-    send()
-  }
+function openClaude() {
+  const url = `https://claude.ai/new?q=${encodeURIComponent(PROMPT)}`
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 </script>
 
 <template>
   <!-- 플로팅 버튼 -->
-  <button class="chat-fab" @click="open = !open" :aria-label="open ? '닫기' : '채팅 열기'">
-    <span v-if="!open">💬</span>
-    <span v-else>✕</span>
+  <button class="chat-fab" @click="openClaude" aria-label="AI 상담 시작">
+    💬
   </button>
-
-  <!-- 채팅창 -->
-  <Transition name="chat">
-    <div v-if="open" class="chat-window">
-      <div class="chat-header">
-        <span>🐾 창업 AI 상담</span>
-        <button class="close-btn" @click="open = false">✕</button>
-      </div>
-
-      <div class="chat-messages" ref="messagesEl">
-        <div
-          v-for="(msg, i) in messages"
-          :key="i"
-          class="msg"
-          :class="msg.role"
-        >
-          <div class="bubble">{{ msg.content }}</div>
-        </div>
-        <div v-if="loading" class="msg assistant">
-          <div class="bubble loading">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="chat-input-row">
-        <textarea
-          v-model="input"
-          @keydown="onKeydown"
-          placeholder="궁금한 점을 입력하세요..."
-          rows="1"
-          :disabled="loading"
-        />
-        <button class="send-btn" @click="send" :disabled="loading || !input.trim()">전송</button>
-      </div>
-    </div>
-  </Transition>
 </template>
 
 <style scoped>
