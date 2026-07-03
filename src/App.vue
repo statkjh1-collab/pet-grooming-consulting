@@ -8,12 +8,12 @@ import ChatWidget from './components/ChatWidget.vue'
     <div class="nav-inner">
       <RouterLink to="/" class="nav-logo">🐾 펫미용샵 창업 컨설팅</RouterLink>
       <nav>
+        <RouterLink to="/education">창업전 라이선스 준비</RouterLink>
         <RouterLink to="/pre-open">사업장 오픈 전</RouterLink>
         <RouterLink to="/operations">미용샵 운영 관리</RouterLink>
         <RouterLink to="/marketing">마케팅 & 홍보</RouterLink>
         <RouterLink to="/finance">수익 & 재무 관리</RouterLink>
         <RouterLink to="/support">국가 창업 지원</RouterLink>
-        <RouterLink to="/education">교육</RouterLink>
         <RouterLink to="/faq">FAQ</RouterLink>
       </nav>
     </div>
