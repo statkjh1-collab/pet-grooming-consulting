@@ -13,6 +13,7 @@ import ChatWidget from './components/ChatWidget.vue'
         <RouterLink to="/marketing">마케팅 & 홍보</RouterLink>
         <RouterLink to="/finance">수익 & 재무 관리</RouterLink>
         <RouterLink to="/support">국가 창업 지원</RouterLink>
+        <RouterLink to="/education">교육</RouterLink>
         <RouterLink to="/faq">FAQ</RouterLink>
       </nav>
     </div>

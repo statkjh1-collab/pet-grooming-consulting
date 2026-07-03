@@ -11,6 +11,7 @@ const router = createRouter({
     { path: '/finance', component: () => import('../views/FinanceView.vue') },
     { path: '/faq', component: () => import('../views/FaqView.vue') },
     { path: '/support', component: () => import('../views/SupportView.vue') },
+    { path: '/education', component: () => import('../views/EducationView.vue') },
   ],
 })
 
