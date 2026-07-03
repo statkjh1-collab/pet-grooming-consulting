@@ -25,6 +25,7 @@
 import { RouterLink } from 'vue-router'
 
 const menus = [
+  { icon: '🎓', path: '/education', name: '창업전 라이선스 준비', desc: '애견관리사 등 자격증 시험 과목과 유튜브 영상으로 배우는 실무 커리큘럼' },
   { icon: '📋', path: '/pre-open', name: '사업장 오픈 전', desc: '인허가, 자격증, 입지 선정, 초기 비용 등 오픈 전 필수 체크리스트' },
   { icon: '🏪', path: '/operations', name: '미용샵 운영 관리', desc: '고객 관리, 예약 시스템, 직원 채용 및 일상 운영 노하우' },
   { icon: '📣', path: '/marketing', name: '마케팅 & 홍보', desc: 'SNS, 카카오 채널, 네이버 플레이스 활용법' },
