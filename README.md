@@ -36,3 +36,20 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## 창업 관리(Startup Tracker) 백엔드
+
+`backend/`에 FastAPI + SQLite 백엔드가 있습니다. 예비창업패키지 준비 과정(체크리스트 등)을 로컬에서만
+관리하는 개인용 도구이며, 배포되는 정적 사이트와는 별개로 로컬 개발 시에만 함께 띄웁니다.
+
+```sh
+cd backend
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+pip install -r requirements.txt
+python seed.py                 # 최초 1회: 체크리스트 초기 데이터 주입 (uvicorn 실행 시 자동으로도 실행됨)
+uvicorn main:app --reload --port 8000
+```
+
+프론트엔드에서는 평소처럼 `npm run dev`를 실행하면 `/startup` 메뉴에서 접근할 수 있습니다 (Vite가 `/api`
+요청을 8000번 포트로 프록시합니다).

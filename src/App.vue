@@ -21,6 +21,7 @@ const menuOpen = ref(false)
         <RouterLink to="/finance" @click="menuOpen = false">수익 & 재무 관리</RouterLink>
         <RouterLink to="/support" @click="menuOpen = false">국가 창업 지원</RouterLink>
         <RouterLink to="/faq" @click="menuOpen = false">FAQ</RouterLink>
+        <RouterLink to="/startup" @click="menuOpen = false">창업 관리</RouterLink>
       </nav>
     </div>
   </header>
