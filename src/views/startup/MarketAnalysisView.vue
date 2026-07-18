@@ -225,9 +225,12 @@ function changeClass(change) {
   return change > 0 ? 'positive' : 'negative'
 }
 
+// 우장산역 (서울 지하철 5호선, 강서구 후보 상권 중심)
+const UJANGSAN_STATION = [37.5489, 126.8364]
+
 function initMap() {
   if (map || !mapEl.value) return
-  map = L.map(mapEl.value, { preferCanvas: true }).setView([37.5509, 126.8495], 14)
+  map = L.map(mapEl.value, { preferCanvas: true }).setView(UJANGSAN_STATION, 15)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 19,
