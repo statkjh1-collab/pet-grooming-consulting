@@ -76,7 +76,15 @@ def latest_distribution(db: Session = Depends(get_db)):
         citywide_categories=_group_categories(stores),
         by_dong=by_dong,
         points=[
-            MarketStorePoint(name=s.name, category=s.category, dong=s.dong, lat=s.lat, lon=s.lon)
+            MarketStorePoint(
+                name=s.name,
+                category=s.category,
+                dong=s.dong,
+                address=s.address,
+                lat=s.lat,
+                lon=s.lon,
+                is_grooming_estimate=s.is_grooming_estimate,
+            )
             for s in stores
         ],
         grooming_estimate=_grooming_estimate(stores),

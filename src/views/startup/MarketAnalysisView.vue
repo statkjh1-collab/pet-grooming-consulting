@@ -53,12 +53,47 @@
 
       <section class="section">
         <h2>지도로 보기</h2>
+
+        <div class="dong-filter">
+          <button class="filter-chip" :class="{ active: selectedDong === '' }" @click="selectDong('')">
+            전체
+          </button>
+          <button
+            v-for="d in distribution.by_dong"
+            :key="d.dong"
+            class="filter-chip"
+            :class="{ active: selectedDong === d.dong }"
+            @click="selectDong(d.dong)"
+          >
+            {{ d.dong }} ({{ d.total }})
+          </button>
+        </div>
+
         <ul class="legend">
           <li v-for="cat in distribution.category_order" :key="cat">
             <span class="swatch" :style="{ background: categoryColor[cat] }"></span>{{ cat }}
           </li>
         </ul>
         <div ref="mapEl" class="map"></div>
+
+        <div v-if="selectedDong" class="dong-list">
+          <h3>{{ selectedDong }} 업소 목록 ({{ filteredPoints.length }}건)</h3>
+          <p class="list-hint">
+            공공데이터는 분기 단위로 갱신됩니다. 폐업 여부 등 최종 확인은 네이버지도 등에서 직접 해주세요.
+          </p>
+          <ul class="store-list">
+            <li v-for="pt in filteredPoints" :key="pt.name + pt.address" class="store-item">
+              <span class="store-dot" :style="{ background: categoryColor[pt.category] }"></span>
+              <div class="store-body">
+                <div class="store-name-row">
+                  <strong>{{ pt.name }}</strong>
+                  <span v-if="pt.is_grooming_estimate" class="grooming-badge">미용 추정</span>
+                </div>
+                <p class="store-meta">{{ pt.category }} · {{ pt.address || '주소 미상' }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </section>
 
       <section class="section">
@@ -161,7 +196,9 @@ const error = ref('')
 const showTable = ref(false)
 const tooltip = ref(null)
 const mapEl = ref(null)
+const selectedDong = ref('')
 let map = null
+let pointLayer = null
 
 onMounted(async () => {
   try {
@@ -201,6 +238,17 @@ const dongMax = computed(() =>
   distribution.value ? Math.max(...distribution.value.by_dong.map((d) => d.total)) : 1,
 )
 
+const filteredPoints = computed(() => {
+  if (!distribution.value) return []
+  if (!selectedDong.value) return distribution.value.points
+  return distribution.value.points.filter((p) => p.dong === selectedDong.value)
+})
+
+function selectDong(dong) {
+  selectedDong.value = dong
+  renderPoints()
+}
+
 function segments(dong) {
   return distribution.value.category_order
     .filter((cat) => dong.categories[cat])
@@ -239,20 +287,32 @@ function initMap() {
 
 function renderPoints() {
   if (!map || !distribution.value) return
-  const layer = L.layerGroup()
-  distribution.value.points.forEach((pt) => {
+  if (pointLayer) {
+    map.removeLayer(pointLayer)
+  }
+
+  const points = filteredPoints.value
+  pointLayer = L.layerGroup()
+  points.forEach((pt) => {
     const color = categoryColor.value[pt.category] ?? '#9ca3af'
     L.circleMarker([pt.lat, pt.lon], {
-      radius: 4,
+      radius: 5,
       color,
       weight: 1,
       fillColor: color,
-      fillOpacity: 0.7,
+      fillOpacity: 0.75,
     })
       .bindPopup(`<strong>${pt.name}</strong><br>${pt.category} · ${pt.dong}`)
-      .addTo(layer)
+      .addTo(pointLayer)
   })
-  layer.addTo(map)
+  pointLayer.addTo(map)
+
+  if (selectedDong.value && points.length) {
+    const bounds = L.latLngBounds(points.map((p) => [p.lat, p.lon]))
+    map.fitBounds(bounds, { padding: [24, 24], maxZoom: 17 })
+  } else if (!selectedDong.value) {
+    map.setView(UJANGSAN_STATION, 15)
+  }
 }
 </script>
 
@@ -374,6 +434,111 @@ function renderPoints() {
   font-size: 0.85rem;
   color: #111;
   font-variant-numeric: tabular-nums;
+}
+
+.dong-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.filter-chip {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  border-color: #f59e0b;
+  color: #d97706;
+}
+
+.filter-chip.active {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #d97706;
+  font-weight: 700;
+}
+
+.dong-list {
+  margin-top: 1.25rem;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 1.25rem;
+}
+
+.dong-list h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+
+.list-hint {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin: 0 0 0.9rem;
+  line-height: 1.5;
+}
+
+.store-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.store-item {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  border: 1px solid #f0f1f3;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+}
+
+.store-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.store-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.store-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.grooming-badge {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.store-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: #6b7280;
 }
 
 .legend {

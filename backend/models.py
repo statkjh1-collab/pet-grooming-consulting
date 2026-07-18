@@ -131,6 +131,7 @@ class MarketStore(Base):
     name: Mapped[str] = mapped_column(String(200))
     category: Mapped[str] = mapped_column(String(100))
     dong: Mapped[str] = mapped_column(String(50))
+    address: Mapped[str] = mapped_column(String(300), default="")
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
     is_grooming_estimate: Mapped[bool] = mapped_column(Boolean, default=False)

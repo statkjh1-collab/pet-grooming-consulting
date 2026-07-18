@@ -101,12 +101,14 @@ def save_snapshot(df: pd.DataFrame):
             category = row["상권업종소분류명"]
             name = str(row["상호명"])
             is_grooming = category == GROOMING_BASE_CATEGORY and any(k in name for k in GROOMING_KEYWORDS)
+            address = row.get("도로명주소") or row.get("지번주소") or ""
             db.add(
                 MarketStore(
                     snapshot_id=snapshot.id,
                     name=name,
                     category=category,
                     dong=row["행정동명"],
+                    address=str(address) if address else "",
                     lat=row["위도"],
                     lon=row["경도"],
                     is_grooming_estimate=is_grooming,

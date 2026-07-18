@@ -179,8 +179,10 @@ class MarketStorePoint(BaseModel):
     name: str
     category: str
     dong: str
+    address: str
     lat: float
     lon: float
+    is_grooming_estimate: bool
 
 
 class MarketDongBreakdown(BaseModel):
