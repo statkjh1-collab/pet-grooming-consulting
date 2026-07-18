@@ -79,7 +79,7 @@
         <div v-if="selectedDong" class="dong-list">
           <h3>{{ selectedDong }} 업소 목록 ({{ filteredPoints.length }}건)</h3>
           <p class="list-hint">
-            공공데이터는 분기 단위로 갱신됩니다. 폐업 여부 등 최종 확인은 네이버지도 등에서 직접 해주세요.
+            이 목록은 분기 단위로 갱신되는 공공데이터 기준입니다. 계약 전 최종 확인은 직접 해주세요.
           </p>
           <ul class="store-list">
             <li v-for="pt in filteredPoints" :key="pt.name + pt.address" class="store-item">
