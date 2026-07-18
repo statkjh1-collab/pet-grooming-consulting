@@ -5,7 +5,10 @@
         <h1 class="page-title">🏘️ 상권·입지</h1>
         <p class="page-desc">매물 시세를 비교하고 시간에 따른 변화를 추적합니다.</p>
       </div>
-      <RouterLink to="/startup/properties/new" class="btn-primary">+ 매물 등록</RouterLink>
+      <div class="head-actions">
+        <RouterLink to="/startup/market" class="btn-secondary">🐾 상권 분석</RouterLink>
+        <RouterLink to="/startup/properties/new" class="btn-primary">+ 매물 등록</RouterLink>
+      </div>
     </div>
 
     <div class="reminder">
@@ -193,6 +196,12 @@ const poiGroups = computed(() =>
   flex-wrap: wrap;
 }
 
+.head-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
 .btn-primary {
   background: #f59e0b;
   color: #fff;
@@ -205,6 +214,21 @@ const poiGroups = computed(() =>
 
 .btn-primary:hover {
   background: #d97706;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
 }
 
 .reminder {

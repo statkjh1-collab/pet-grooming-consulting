@@ -173,3 +173,43 @@ class POIRead(POIBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+
+class MarketStorePoint(BaseModel):
+    name: str
+    category: str
+    dong: str
+    lat: float
+    lon: float
+
+
+class MarketDongBreakdown(BaseModel):
+    dong: str
+    total: int
+    categories: dict[str, int]
+
+
+class MarketGroomingEstimate(BaseModel):
+    keyword_count: int
+    base_count: int
+    keywords: list[str]
+    note: str
+
+
+class MarketDistribution(BaseModel):
+    region: str
+    snapshot_month: str
+    fetched_at: datetime
+    category_order: list[str]
+    total_stores: int
+    citywide_categories: dict[str, int]
+    by_dong: list[MarketDongBreakdown]
+    points: list[MarketStorePoint]
+    grooming_estimate: MarketGroomingEstimate
+
+
+class MarketTrendPoint(BaseModel):
+    snapshot_month: str
+    total_stores: int
+    category_counts: dict[str, int]
+    net_change: int | None

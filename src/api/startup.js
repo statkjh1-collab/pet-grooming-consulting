@@ -66,3 +66,11 @@ export function fetchPois(relation) {
   const qs = relation ? `?relation=${encodeURIComponent(relation)}` : ''
   return request(`/pois${qs}`)
 }
+
+export function fetchMarketLatest() {
+  return request('/market/latest')
+}
+
+export function fetchMarketTrend() {
+  return request('/market/trend')
+}

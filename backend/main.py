@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
-from routers import checklist, poi, property
+from routers import checklist, market, poi, property
 from seed import seed
 
 
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(checklist.router)
 app.include_router(property.router)
 app.include_router(poi.router)
+app.include_router(market.router)
 
 
 @app.get("/api/health")

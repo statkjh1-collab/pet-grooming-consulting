@@ -107,3 +107,32 @@ class POI(Base):
     rating: Mapped[float | None] = mapped_column(Float, nullable=True)
     relation: Mapped[str] = mapped_column(String(20))
     note: Mapped[str] = mapped_column(Text, default="")
+
+
+class MarketSnapshot(Base):
+    __tablename__ = "market_snapshots"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    region: Mapped[str] = mapped_column(String(50))
+    snapshot_month: Mapped[str] = mapped_column(String(7))  # "YYYY-MM"
+    fetched_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    source_note: Mapped[str] = mapped_column(Text, default="")
+
+    stores: Mapped[list["MarketStore"]] = relationship(
+        back_populates="snapshot", cascade="all, delete-orphan"
+    )
+
+
+class MarketStore(Base):
+    __tablename__ = "market_stores"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    snapshot_id: Mapped[int] = mapped_column(ForeignKey("market_snapshots.id"))
+    name: Mapped[str] = mapped_column(String(200))
+    category: Mapped[str] = mapped_column(String(100))
+    dong: Mapped[str] = mapped_column(String(50))
+    lat: Mapped[float] = mapped_column(Float)
+    lon: Mapped[float] = mapped_column(Float)
+    is_grooming_estimate: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    snapshot: Mapped["MarketSnapshot"] = relationship(back_populates="stores")
