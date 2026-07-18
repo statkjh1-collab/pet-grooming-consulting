@@ -215,3 +215,17 @@ class MarketTrendPoint(BaseModel):
     total_stores: int
     category_counts: dict[str, int]
     net_change: int | None
+
+
+class MarketStoreChange(BaseModel):
+    name: str
+    category: str
+    dong: str
+    address: str
+
+
+class MarketChanges(BaseModel):
+    from_month: str | None
+    to_month: str
+    new_stores: list[MarketStoreChange]
+    removed_stores: list[MarketStoreChange]

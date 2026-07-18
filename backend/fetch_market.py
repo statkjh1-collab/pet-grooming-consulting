@@ -105,6 +105,7 @@ def save_snapshot(df: pd.DataFrame):
             db.add(
                 MarketStore(
                     snapshot_id=snapshot.id,
+                    biz_no=str(row["상가업소번호"]),
                     name=name,
                     category=category,
                     dong=row["행정동명"],

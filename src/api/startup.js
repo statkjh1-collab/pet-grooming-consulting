@@ -74,3 +74,7 @@ export function fetchMarketLatest() {
 export function fetchMarketTrend() {
   return request('/market/trend')
 }
+
+export function fetchMarketChanges() {
+  return request('/market/changes')
+}

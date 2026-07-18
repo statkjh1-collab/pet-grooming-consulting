@@ -145,8 +145,8 @@
       <section v-if="trend.length" class="section">
         <h2>📈 월별 추적 (스냅샷 이력)</h2>
         <p class="desc-text">
-          매달 스냅샷을 쌓아 변화를 추적합니다. API에 개업일자 필드가 없어 "순증감"은 전월 대비 총 업소 수
-          차이로 근사한 값입니다 (폐업·신규 구분 불가).
+          매달 스냅샷을 쌓아 변화를 추적합니다. 상가업소번호(영구 ID) 기준으로 신규/소멸 업소를 아래에서
+          구분해서 보여줍니다.
         </p>
         <table class="data-table">
           <thead>
@@ -167,6 +167,44 @@
           </tbody>
         </table>
       </section>
+
+      <section v-if="changes" class="section">
+        <h2>🔄 지난달 대비 신규 · 소멸 업소</h2>
+
+        <p v-if="!changes.from_month" class="desc-text">
+          아직 비교할 이전 달 스냅샷이 없습니다. 다음 스냅샷부터 신규/소멸 업소를 표시합니다.
+        </p>
+
+        <template v-else>
+          <p class="desc-text">{{ changes.from_month }} → {{ changes.to_month }} 비교 기준</p>
+          <div class="changes-grid">
+            <div class="change-col">
+              <h3 class="change-head new">🆕 신규 ({{ changes.new_stores.length }}건)</h3>
+              <ul v-if="changes.new_stores.length" class="change-list">
+                <li v-for="s in changes.new_stores" :key="s.name + s.address">
+                  <strong>{{ s.name }}</strong>
+                  <p>{{ s.category }} · {{ s.dong }} · {{ s.address || '주소 미상' }}</p>
+                </li>
+              </ul>
+              <p v-else class="change-empty">신규 업소가 없습니다.</p>
+            </div>
+            <div class="change-col">
+              <h3 class="change-head removed">❌ 소멸 ({{ changes.removed_stores.length }}건)</h3>
+              <ul v-if="changes.removed_stores.length" class="change-list">
+                <li v-for="s in changes.removed_stores" :key="s.name + s.address">
+                  <strong>{{ s.name }}</strong>
+                  <p>{{ s.category }} · {{ s.dong }} · {{ s.address || '주소 미상' }}</p>
+                </li>
+              </ul>
+              <p v-else class="change-empty">소멸 업소가 없습니다.</p>
+            </div>
+          </div>
+          <p class="list-hint">
+            "소멸"은 API 데이터에서 사라진 것일 뿐 실제 폐업을 보장하지 않습니다(주소·업종 변경 등으로도
+            빠질 수 있음). 계약 전 최종 확인은 직접 해주세요.
+          </p>
+        </template>
+      </section>
     </template>
 
     <div
@@ -185,12 +223,13 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { fetchMarketLatest, fetchMarketTrend } from '../../api/startup'
+import { fetchMarketLatest, fetchMarketTrend, fetchMarketChanges } from '../../api/startup'
 
 const SLOT_COLORS = ['#2a78d6', '#1baf7a', '#eda100', '#008300', '#4a3aa7', '#e34948', '#e87ba4', '#eb6834']
 
 const distribution = ref(null)
 const trend = ref([])
+const changes = ref(null)
 const loading = ref(true)
 const error = ref('')
 const showTable = ref(false)
@@ -202,9 +241,14 @@ let pointLayer = null
 
 onMounted(async () => {
   try {
-    const [dist, trendData] = await Promise.all([fetchMarketLatest(), fetchMarketTrend()])
+    const [dist, trendData, changesData] = await Promise.all([
+      fetchMarketLatest(),
+      fetchMarketTrend(),
+      fetchMarketChanges(),
+    ])
     distribution.value = dist
     trend.value = trendData
+    changes.value = changesData
   } catch (e) {
     error.value = e.message
   } finally {
@@ -591,6 +635,61 @@ function renderPoints() {
 .toggle-btn:hover {
   border-color: #f59e0b;
   color: #d97706;
+}
+
+.changes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.change-head {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.change-head.new {
+  color: #15803d;
+}
+
+.change-head.removed {
+  color: #b91c1c;
+}
+
+.change-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.change-list li {
+  border: 1px solid #f0f1f3;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.change-list li p {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.change-empty {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .changes-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stacked-bars {

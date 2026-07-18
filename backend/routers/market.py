@@ -4,9 +4,11 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import MarketSnapshot, MarketStore
 from schemas import (
+    MarketChanges,
     MarketDistribution,
     MarketDongBreakdown,
     MarketGroomingEstimate,
+    MarketStoreChange,
     MarketStorePoint,
     MarketTrendPoint,
 )
@@ -111,3 +113,37 @@ def trend(db: Session = Depends(get_db)):
         prev_total = total
 
     return result
+
+
+def _to_change(s: MarketStore) -> MarketStoreChange:
+    return MarketStoreChange(name=s.name, category=s.category, dong=s.dong, address=s.address)
+
+
+@router.get("/changes", response_model=MarketChanges)
+def changes(db: Session = Depends(get_db)):
+    snapshots = (
+        db.query(MarketSnapshot).order_by(MarketSnapshot.snapshot_month.desc()).limit(2).all()
+    )
+    if not snapshots:
+        raise HTTPException(
+            status_code=404,
+            detail="아직 상권 데이터가 없습니다. backend/fetch_market.py로 먼저 스냅샷을 수집하세요.",
+        )
+
+    latest = snapshots[0]
+    if len(snapshots) < 2:
+        return MarketChanges(from_month=None, to_month=latest.snapshot_month, new_stores=[], removed_stores=[])
+
+    previous = snapshots[1]
+    latest_by_biz = {s.biz_no: s for s in latest.stores if s.biz_no}
+    prev_by_biz = {s.biz_no: s for s in previous.stores if s.biz_no}
+
+    new_ids = set(latest_by_biz) - set(prev_by_biz)
+    removed_ids = set(prev_by_biz) - set(latest_by_biz)
+
+    return MarketChanges(
+        from_month=previous.snapshot_month,
+        to_month=latest.snapshot_month,
+        new_stores=[_to_change(latest_by_biz[i]) for i in new_ids],
+        removed_stores=[_to_change(prev_by_biz[i]) for i in removed_ids],
+    )

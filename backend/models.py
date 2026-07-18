@@ -128,6 +128,7 @@ class MarketStore(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     snapshot_id: Mapped[int] = mapped_column(ForeignKey("market_snapshots.id"))
+    biz_no: Mapped[str] = mapped_column(String(30), default="")  # 상가업소번호 — 스냅샷 간 동일 업소 매칭용 영구 ID
     name: Mapped[str] = mapped_column(String(200))
     category: Mapped[str] = mapped_column(String(100))
     dong: Mapped[str] = mapped_column(String(50))
