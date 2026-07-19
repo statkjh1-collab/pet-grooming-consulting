@@ -1,4 +1,6 @@
-const BASE = '/api'
+// 로컬 개발: Vite 프록시가 /api를 8000번 포트로 넘겨줌.
+// 배포: VITE_API_BASE_URL(Vercel 환경변수)이 Render 백엔드 주소를 가리킴.
+const BASE = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api`
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {

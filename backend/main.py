@@ -19,7 +19,12 @@ app = FastAPI(title="Startup Tracker API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://pet-grooming-consulting.vercel.app",
+    ],
+    allow_origin_regex=r"https://pet-grooming-consulting-.*\.vercel\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )
