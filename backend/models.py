@@ -138,3 +138,15 @@ class MarketStore(Base):
     is_grooming_estimate: Mapped[bool] = mapped_column(Boolean, default=False)
 
     snapshot: Mapped["MarketSnapshot"] = relationship(back_populates="stores")
+
+
+class Evidence(Base):
+    __tablename__ = "evidence"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    type: Mapped[str] = mapped_column(String(20))
+    content: Mapped[str] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(String(200), default="")
+    date: Mapped[date] = mapped_column(Date, default=date.today)
+    attachment: Mapped[str] = mapped_column(String(500), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)

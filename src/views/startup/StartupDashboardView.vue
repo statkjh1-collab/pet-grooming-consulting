@@ -35,11 +35,11 @@
         <strong>산출물 보관함</strong>
         <p>사업계획서·커리큘럼 등 자료 정리 (준비중)</p>
       </div>
-      <div class="menu-card disabled">
+      <RouterLink to="/startup/evidence" class="menu-card">
         <span class="menu-icon">🧾</span>
         <strong>증빙 수집함</strong>
-        <p>예창패용 근거 자료 모음 (준비중)</p>
-      </div>
+        <p>예창패용 근거 자료 모음</p>
+      </RouterLink>
       <div class="menu-card disabled">
         <span class="menu-icon">📚</span>
         <strong>커리큘럼 운영</strong>

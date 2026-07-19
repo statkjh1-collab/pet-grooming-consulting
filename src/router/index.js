@@ -18,6 +18,7 @@ const router = createRouter({
     { path: '/startup/properties/new', component: () => import('../views/startup/PropertyFormView.vue') },
     { path: '/startup/properties/:id', component: () => import('../views/startup/PropertyFormView.vue') },
     { path: '/startup/market', component: () => import('../views/startup/MarketAnalysisView.vue') },
+    { path: '/startup/evidence', component: () => import('../views/startup/EvidenceView.vue') },
   ],
 })
 

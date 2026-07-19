@@ -80,3 +80,26 @@ export function fetchMarketTrend() {
 export function fetchMarketChanges() {
   return request('/market/changes')
 }
+
+export function fetchEvidence(type) {
+  const qs = type ? `?type=${encodeURIComponent(type)}` : ''
+  return request(`/evidence${qs}`)
+}
+
+export function createEvidence(payload) {
+  return request('/evidence', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateEvidence(id, payload) {
+  return request(`/evidence/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function deleteEvidence(id) {
+  return request(`/evidence/${id}`, { method: 'DELETE' })
+}

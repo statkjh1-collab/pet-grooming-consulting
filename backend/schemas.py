@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date as _date, datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
@@ -9,6 +9,7 @@ POIType = Literal[
     "경쟁미용실", "동물병원_주간", "동물병원_24시", "유치원호텔", "펫샵", "미용학원", "애견카페"
 ]
 POIRelation = Literal["경쟁", "제휴후보", "응급대응", "수요파이프라인"]
+EvidenceType = Literal["고객이력", "앱사용후기", "컨설팅후기", "스튜디오수요", "시장데이터", "기타"]
 
 
 class ItemRead(BaseModel):
@@ -56,7 +57,7 @@ class PriceHistoryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    recorded_at: date
+    recorded_at: _date
     deposit: int
     monthly_rent: int
     is_vacant: bool
@@ -64,7 +65,7 @@ class PriceHistoryRead(BaseModel):
 
 
 class PriceHistoryCreate(BaseModel):
-    recorded_at: date | None = None
+    recorded_at: _date | None = None
     deposit: int
     monthly_rent: int
     is_vacant: bool = True
@@ -88,7 +89,7 @@ class PropertyBase(BaseModel):
     water_supply: WaterSupply = "미확인"
     electric_capacity: str = ""
     status: PropertyStatus = "관심"
-    visited_at: date | None = None
+    visited_at: _date | None = None
     memo: str = ""
 
 
@@ -113,7 +114,7 @@ class PropertyUpdate(BaseModel):
     water_supply: WaterSupply | None = None
     electric_capacity: str | None = None
     status: PropertyStatus | None = None
-    visited_at: date | None = None
+    visited_at: _date | None = None
     memo: str | None = None
 
 
@@ -229,3 +230,30 @@ class MarketChanges(BaseModel):
     to_month: str
     new_stores: list[MarketStoreChange]
     removed_stores: list[MarketStoreChange]
+
+
+class EvidenceBase(BaseModel):
+    type: EvidenceType
+    content: str
+    source: str = ""
+    date: _date
+    attachment: str = ""
+
+
+class EvidenceCreate(EvidenceBase):
+    pass
+
+
+class EvidenceUpdate(BaseModel):
+    type: EvidenceType | None = None
+    content: str | None = None
+    source: str | None = None
+    date: _date | None = None
+    attachment: str | None = None
+
+
+class EvidenceRead(EvidenceBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    created_at: datetime
